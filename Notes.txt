@@ -1,0 +1,52 @@
+Operational mode of the processor
+===================================
+M0/M3/M4
+
+Two operational modes:
+1) Thread mode 
+2) Handler mode
+
+- Application code executes under "Thread mode", aka "User Mode".
+
+- Exception handlers or Interrupt handlers will run under the "Handler mode".
+
+- Processor starts with Thread mode
+
+
+Access Level of the Processor
+================================
+
+1) Two Access levels
+    a) Privileged Access Level (PAL) - Full access to processor specific resources or restricted registers
+    b) Non-Privileged Access Level (NPAL) - Inverse of PAL
+
+2) Default code will be ran on PAL
+
+3) Handler Mode is always in PAL
+
+4) Its possible to move to NPAL during Thread Mode, but cannot be moved out unless through Handler Mode
+
+5) CONTROL registers of the processor to switch between access levels
+
+
+Cortex M Processor Core Registers
+================================
+
+1) R0 to R12 (total 13) registers are general purpose
+
+2) Core registers are 32 bits
+
+3) Stack pointer is stored in register (R13)
+
+4) Link register (R14) stores the return address of the next instruction for subroutines, function calls, and exceptions.
+
+5) Program counter (R15) register contains the current program address
+
+6) Program status register is a collection of three sub status registers
+    a) Application Program Status Register (APSR)
+    b) Interrupt Program Status Register (IPSR)
+    c) Execution Program Status Register (EPSR)
+
+7) Non-memory mapped registers:
+    Do not have unique address that allow access. Hence they are not part of the processor memory map - can only be accessed via assembly instructions.
+
