@@ -1,0 +1,88 @@
+Assembly Code Usage (ARM GCC)
+===================================
+Assembly instruction: MOV R0,R1
+Inline assembly instruction: _asm volatile("MOV R0, R1");
+
+asm volatile("LDR R0, [R1]"); // Load read
+asm volatile("LDR R1, [R2]");
+asm volatile("ADD R1, R0,R1"); // Add
+asm volatile("STR R1, [R3]"); // Store
+
+
+
+General form of an inline assembly statement
+===================================
+asm volatile(code: output operand list: input operand list: clobber list);
+
+volatile: This attribute to the asm statement to instruct the compiler not to optimize the assembler code.
+
+code: Assembly mnemonic - defined as a single string.
+
+output/input operand list: Output/input operands seperated by commas
+
+clobber list: Used to tell the compiler the modifications done by the assembler code.
+
+These two are equivalent:
+asm volatile("MOV R0, R1");
+asm volatile("MOV R0, R1":::);
+
+
+
+Input/output operands and Constraint string
+===================================
+
+Input/output operand format:
+"<Constraint string>" (<'C' expression>)
+
+Constraint string = constraint character + constraint modifier
+
+Move the contents of C variable 'val' to ARM register R0
+asm volatile("MOV R0,%0"::"r"(val));
+
+code = "MOV R0,%0"
+
+Operand indexing is done by % sign followed by a digit:
+%0 refers to first operand
+%1 refers to the second operand
+
+output operand = none
+
+input operand = "r"(val)
+ldr r3, [r7, #4]
+mov r0, r3
+
+"r" - Constraint string, but "r" is a constraint character which indicates that the compiler should use general registers for data manipulation.
+
+asm volatile("MOV R0,%0"::"i"(0x50));
+
+"i" - Directly moves the contents of an address into a register without  general resiters being used inbetween
+
+movs r2, #80; 0x50
+mov r0, r3  (Compiles to)
+
+
+
+Reading/Writing Special Registers
+===================================
+uint32_t control_reg;
+asm volatile ("MRS %0, CONTROL":"=r"(control_reg)::);
+
+"=" Write only operand, usually used for all output operands.
+
+
+Copy contents of one variable to another variable
+===================================
+int var1 = 10; var2;
+asm ("MOV %0, %1":"=r"(var2):"r"(var1):);
+
+
+Copy contents of a ponitor into another variable
+===================================
+int p1, *p2;
+
+p2 = (int*)0x2000008;
+
+asm volatile("LDR %0, [%1]":"=r"(p1):"r"(p2):); // p1 = *p2
+
+p1 = destination
+p2 = source
