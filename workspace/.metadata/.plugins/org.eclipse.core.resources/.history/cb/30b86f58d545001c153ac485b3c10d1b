@@ -18,32 +18,10 @@
  */
 
 #include <stdint.h>
-#include <stdio.h>
-
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
-
-void generate_interrupt(){
-	uint32_t *pSTIR = (uint32_t*)0xE000EF00;
-	uint32_t *pISER0 = (uint32_t*)0xE000E100;
-
-	//ENABLE IRQ3 interrupt
-	*pISER0 |= (1<<3);
-
-	//generate an interrupt from software for IRQ3
-	*pSTIR = (3 & 0x1FF);
-}
-
-void change_access_level_unpriv(void){
-	//read
-	asm volatile("MRS R0, CONTROL");
-	//modify
-	asm volatile("ORR R0, R0, #0x01");
-	//write
-	asm volatile("MSR CONTROL,R0");
-}
 
 int main(void)
 {
@@ -60,28 +38,12 @@ int main(void)
 
 //	int control_reg;
 //	asm volatile("MRS %0, CONTROL":"=r"(control_reg)::);
-//
-//	int p1, *p2;
-//
-//	p2 = (int*)0x2000008;
-//
-//	asm volatile("LDR %0, [%1]":"=r"(p1):"r"(p2):); // p1 = *p2
 
-	printf("In thread mode: before interrupt \n");
+	int p1, *p2;
 
-	change_access_level_unpriv();
+	p2 = (int*)0x2000008;
 
-	generate_interrupt();
-
-	printf("In thread mode: after interrupt \n");
+	asm volatile("LDR %0, [%1]":"=r"(p1):"r"(p2):); // p1 = *p2
 
 	for(;;);
-}
-
-void RTC_WKUP_IRQHandler(void){
-	printf("In Handler mode \n");
-}
-
-void HardFault_Handler(void){
-	printf("Hard fault \n");
 }

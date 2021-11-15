@@ -86,3 +86,29 @@ asm volatile("LDR %0, [%1]":"=r"(p1):"r"(p2):); // p1 = *p2
 
 p1 = destination
 p2 = source
+
+
+Reset sequence
+===================================
+Reset handler:
+1) Initialise data section
+2) Initialise bss section
+3) Initilise C std library
+4) Then main
+
+
+T-bit
+===================================
+
+1) The T-bit determines whether the next instruction that is loaded is from ARM ISA or Thumb ISA
+ 
+2) If T-bit = 0 (ARM ISA), else T-bit = 1 (Thumb ISA)
+
+3) The Cortex Mx processor does not support the "ARM" state, so T-bit is always set 1. If not maintained
+   it causes an exception.
+
+4) The LSB (Bit 0) of the program counter (PC) is linked to the T-bit. 
+   When you load an address, bit 0 of the address is loaded into the T-bit.
+   This taken care by the compiler.
+
+5) Hence any address should be odd.
