@@ -19,5 +19,13 @@ access using an AHB-APB bridge
 
 (Processor D-CODE) <-AHB(32 Bit)-> Program Data
 (Processor I-CODE) <-AHB(32 Bit)-> Program Data
-(Processor PPB) <-AHB(32 Bit)-> PPB (CONTROL Registers, etc)
+(Processor PPB) <-AHB(32 Bit)-> PPB (NVIC, MPU, ETM, etc)
 (Processor System) <-AHB(32 Bit)-> SRAM
+
+
+
+Bit Banding
+===================================
+1) Directly accessing individual bits of a byte using an address
+
+2) Advantage - allows for atomic operations on data
